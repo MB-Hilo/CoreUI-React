@@ -201,10 +201,10 @@ const cardChartOpts4 = {
 
 // Social Box Chart
 const socialBoxData = [
-  {data: [65, 59, 84, 84, 51, 55, 40], label: 'facebook'},
-  {data: [1, 13, 9, 17, 34, 41, 38], label: 'twitter'},
-  {data: [78, 81, 80, 45, 34, 12, 40], label: 'linkedin'},
-  {data: [35, 23, 56, 22, 97, 23, 64], label: 'google'}
+  {data: [65, 59, 84, 84, 51, 55, 40], label: 'facebook', class:'fa-facebook', stats: [{"label":"friends","number":90000},{"label":"feeds","number":1000}]},
+  {data: [1, 13, 9, 17, 34, 41, 38], label: 'twitter', class:'fa-twitter', stats: [{"label":"followers","number":120000},{"label":"tweets","number":4000}]},
+  {data: [78, 81, 80, 45, 34, 12, 40], label: 'linkedin', class:'fa-linkedin', stats: [{"label":"contacts","number":12000},{"label":"feeds","number":5000}]},
+  {data: [35, 23, 56, 22, 97, 23, 64], label: 'google-plus', class:'fa-google-plus', stats: [{"label":"followers","number":150000},{"label":"circles","number":500}]}
 ];
 
 const makeSocialBoxData = (dataSetNo) => {
@@ -219,6 +219,8 @@ const makeSocialBoxData = (dataSetNo) => {
         borderWidth: 2,
         data: dataset.data,
         label: dataset.label,
+        class: dataset.class,
+        stats: dataset.stats
       }
     ]
   };
@@ -411,6 +413,83 @@ const mainChartOpts = {
 }
 
 
+class SocialChart extends Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+            <Col xs="6" sm="6" lg="3">
+              <div className={"social-box "+ this.props.data().datasets[0].label}>
+                <i className={"fa "+this.props.data().datasets[0].class}></i>
+                <div className="chart-wrapper">
+                  <Line data={this.props.data} options={this.props.opts} height={90}/>
+                </div>
+                <ul>
+                  <li>
+                    <strong>{this.props.data().datasets[0].stats[0].number}</strong>
+                    <span>{this.props.data().datasets[0].stats[0].label}</span>
+                  </li>
+                  <li>
+                    <strong>{this.props.data().datasets[0].stats[1].number}</strong>
+                    <span>{this.props.data().datasets[0].stats[1].label}</span>
+                  </li>
+                </ul>
+              </div>
+            </Col>
+     )
+  }
+}
+
+class MiniChart extends Component {
+  constructor(props) {
+    super(props);
+
+    this.toggle = this.toggle.bind(this);
+    this.state = {
+      dropdownOpen: false
+    };
+  }
+
+  toggle() {
+    this.setState({
+      dropdownOpen: !this.state.dropdownOpen
+    });
+  }
+
+  render() {
+    return (
+          <Col xs="12" sm="6" lg="3">
+            <Card className="text-white bg-primary">
+              <CardBlock className="card-body pb-0">
+                <ButtonGroup className="float-right">
+                  <ButtonDropdown id='card1' isOpen={this.state.card}
+                                  toggle={() => { this.setState({ card: !this.state.card }); }}>
+                    <DropdownToggle caret className="p-0" color="transparent">
+                      <i className="icon-settings"></i>
+                    </DropdownToggle>
+                    <DropdownMenu className={this.state.card ? "show" : ""} right>
+                      <DropdownItem>Action</DropdownItem>
+                      <DropdownItem>Another action</DropdownItem>
+                      <DropdownItem disabled>Disabled action</DropdownItem>
+                      <DropdownItem>Something else here</DropdownItem>
+                    </DropdownMenu>
+                  </ButtonDropdown>
+                </ButtonGroup>
+                <h4 className="mb-0">9.823</h4>
+                <p>Members online</p>
+              </CardBlock>
+              <div className="chart-wrapper px-3" style={{height:'70px'}}>
+                <Line data={this.props.data} options={this.props.opts} height={70}/>
+              </div>
+            </Card>
+          </Col>
+     )
+  }
+}
+
+
 class Dashboard extends Component {
   constructor(props) {
     super(props);
@@ -432,107 +511,12 @@ class Dashboard extends Component {
 
     return (
       <div className="animated fadeIn">
+        {/*First row of charts*/}
         <Row>
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-primary">
-              <CardBlock className="card-body pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown id='card1' isOpen={this.state.card1}
-                                  toggle={() => { this.setState({ card1: !this.state.card1 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu className={this.state.card1 ? "show" : ""} right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem disabled>Disabled action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <h4 className="mb-0">9.823</h4>
-                <p>Members online</p>
-              </CardBlock>
-              <div className="chart-wrapper px-3" style={{height:'70px'}}>
-                <Line data={cardChartData1} options={cardChartOpts1} height={70}/>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-info">
-              <CardBlock className="card-body pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown id='card2' isOpen={this.state.card2}
-                            toggle={() => { this.setState({ card2: !this.state.card2 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu className={this.state.card2 ? "show" : ""} right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <h4 className="mb-0">9.823</h4>
-                <p>Members online</p>
-              </CardBlock>
-              <div className="chart-wrapper px-3" style={{height:'70px'}}>
-                <Line data={cardChartData2} options={cardChartOpts2} height={70}/>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-warning">
-              <CardBlock className="card-body pb-0">
-                <ButtonGroup className="float-right">
-                  <Dropdown id='card3' isOpen={this.state.card3}
-                            toggle={() => { this.setState({ card3: !this.state.card3 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu className={this.state.card3 ? "show" : ""} right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </Dropdown>
-                </ButtonGroup>
-                <h4 className="mb-0">9.823</h4>
-                <p>Members online</p>
-              </CardBlock>
-              <div className="chart-wrapper px-0" style={{height:'70px'}}>
-                <Line data={cardChartData3} options={cardChartOpts3} height={70}/>
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs="12" sm="6" lg="3">
-            <Card className="text-white bg-danger">
-              <CardBlock className="card-body pb-0">
-                <ButtonGroup className="float-right">
-                  <ButtonDropdown id='card4' isOpen={this.state.card4}
-                                  toggle={() => { this.setState({ card4: !this.state.card4 }); }}>
-                    <DropdownToggle caret className="p-0" color="transparent">
-                      <i className="icon-settings"></i>
-                    </DropdownToggle>
-                    <DropdownMenu className={this.state.card4 ? "show" : ""} right>
-                      <DropdownItem>Action</DropdownItem>
-                      <DropdownItem>Another action</DropdownItem>
-                      <DropdownItem>Something else here</DropdownItem>
-                    </DropdownMenu>
-                  </ButtonDropdown>
-                </ButtonGroup>
-                <h4 className="mb-0">9.823</h4>
-                <p>Members online</p>
-              </CardBlock>
-              <div className="chart-wrapper px-3" style={{height:'70px'}}>
-                <Bar data={cardChartData4} options={cardChartOpts4} height={70}/>
-              </div>
-            </Card>
-          </Col>
+          <MiniChart data={cardChartData1} opts={cardChartOpts1}></MiniChart>
+          <MiniChart data={cardChartData2} opts={cardChartOpts2}></MiniChart>
+          <MiniChart data={cardChartData3} opts={cardChartOpts3}></MiniChart>
+          <MiniChart data={cardChartData4} opts={cardChartOpts4}></MiniChart>
         </Row>
         <Row>
           <Col>
@@ -597,83 +581,12 @@ class Dashboard extends Component {
           </Col>
         </Row>
 
+        {/*social box data*/}
         <Row>
-          <Col xs="6" sm="6" lg="3">
-            <div className="social-box facebook">
-              <i className="fa fa-facebook"></i>
-              <div className="chart-wrapper">
-                <Line data={makeSocialBoxData(0)} options={socialChartOpts} height={90}/>
-              </div>
-              <ul>
-                <li>
-                  <strong>89k</strong>
-                  <span>friends</span>
-                </li>
-                <li>
-                  <strong>459</strong>
-                  <span>feeds</span>
-                </li>
-              </ul>
-            </div>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-            <div className="social-box twitter">
-              <i className="fa fa-twitter"></i>
-              <div className="chart-wrapper">
-                <Line data={makeSocialBoxData(1)} options={socialChartOpts} height={90}/>
-              </div>
-              <ul>
-                <li>
-                  <strong>973k</strong>
-                  <span>followers</span>
-                </li>
-                <li>
-                  <strong>1.792</strong>
-                  <span>tweets</span>
-                </li>
-              </ul>
-            </div>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-
-            <div className="social-box linkedin">
-              <i className="fa fa-linkedin"></i>
-              <div className="chart-wrapper">
-                <Line data={makeSocialBoxData(2)} options={socialChartOpts} height={90}/>
-              </div>
-              <ul>
-                <li>
-                  <strong>500+</strong>
-                  <span>contacts</span>
-                </li>
-                <li>
-                  <strong>292</strong>
-                  <span>feeds</span>
-                </li>
-              </ul>
-            </div>
-          </Col>
-
-          <Col xs="6" sm="6" lg="3">
-            <div className="social-box google-plus">
-              <i className="fa fa-google-plus"></i>
-              <div className="chart-wrapper">
-                <Line data={makeSocialBoxData(3)} options={socialChartOpts} height={90}/>
-              </div>
-              <ul>
-                <li>
-                  <strong>894</strong>
-                  <span>followers</span>
-                </li>
-                <li>
-                  <strong>92</strong>
-                  <span>circles</span>
-                </li>
-              </ul>
-            </div>
-          </Col>
+          <SocialChart data={makeSocialBoxData(0)} opts={socialChartOpts}></SocialChart>
+          <SocialChart data={makeSocialBoxData(1)} opts={socialChartOpts}></SocialChart>
+          <SocialChart data={makeSocialBoxData(2)} opts={socialChartOpts}></SocialChart>
+          <SocialChart data={makeSocialBoxData(3)} opts={socialChartOpts}></SocialChart>                    
         </Row>
 
         <Row>
